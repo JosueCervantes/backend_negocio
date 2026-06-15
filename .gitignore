@@ -1,0 +1,7 @@
+localstack-data
+.env
+__pycache__
+app/__pycache__
+app/dto/__pycache__
+app/router/__pycache__
+/uploads

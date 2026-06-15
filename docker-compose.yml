@@ -1,0 +1,57 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: negocio_mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: negocio
+      MYSQL_USER: negocio_user
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: rootsecret
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: negocio_backend
+    restart: always
+    working_dir: /usr/src/app
+    volumes:
+      - .:/usr/src/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8000:8000"
+    environment:
+      PYTHONUNBUFFERED: "1"
+      DATABASE_URL: mysql+pymysql://negocio_user:secret@mysql:3306/negocio
+      AWS_ACCESS_KEY_ID: fake
+      AWS_SECRET_ACCESS_KEY: fake
+      AWS_DEFAULT_REGION: us-west-2
+      LOCALSTACK_ENDPOINT_URL: http://localstack:4566
+    depends_on:
+      - mysql
+      - localstack
+
+  localstack:
+    image: localstack/localstack:3
+    container_name: negocio_localstack
+    restart: always
+    environment:
+      SERVICES: s3,sqs,ses
+      DEFAULT_REGION: us-west-2
+      DEBUG: "1"
+      AWS_ACCESS_KEY_ID: fake
+      AWS_SECRET_ACCESS_KEY: fake
+    ports:
+      - "4566:4566"
+    volumes:
+      - ./localstack-data:/var/lib/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./localstack-init:/etc/localstack/init/ready.d
+
+volumes:
+  mysql_data:
