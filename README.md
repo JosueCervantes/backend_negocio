@@ -74,7 +74,7 @@ negocio-server/
 2. Crear un archivo .env con las variables de entorno a partir de .env.example
 3. Levantar los contenedores con docker compose: docker compose up -d --build
 4. Aplicar migraciones de alembic: docker exec -it negocio_backend alembic upgrade head
-5. Crear el bucket S3 en localstack: docker exec -it localstack awslocal s3 mb s3://negocio
+5. Crear el bucket S3 en localstack: docker exec -it local_localstack awslocal s3 mb s3://negocio
 6. Verificar bucket: docker compose exec localstack awslocal s3 ls
 7. Probar api: http://localhost:8000
 
