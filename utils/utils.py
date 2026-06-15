@@ -54,7 +54,7 @@ def decode_access_token(token: str):
 
 #funcion para enviar correo
 def sendMail(html, asunto, para):
-    msg = MIMEMultipart('alternave')
+    msg = MIMEMultipart('alternative')
     msg['Subject'] = asunto
     msg['From'] =  os.getenv("SMTP_USER")
     msg['To'] = para

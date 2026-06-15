@@ -18,8 +18,14 @@ router = APIRouter(prefix="/negocio_by_user", tags=["negocio_by_user"])
 
 load_dotenv()
 
-@router.get("/{id}", response_model=list[NegocioInterface])
-async def get_by_user(id: int, session: Session = Depends(get_session), _: UsuarioResponse = Depends(get_current_user)):
+@router.get("/{id}", response_model=NegocioInterface)
+async def get_by_user(id: int, session: Session = Depends(get_session), usuario_actual: UsuarioResponse = Depends(get_current_user)):
+    #validamos que el usuario solicitado sea el mismo que el autenticado
+    if id != usuario_actual.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="No tienes permiso para acceder a este recurso",
+        )
     #validamos que existe el usuario
     usuario = session.get(Usuario, id)
     if not usuario:

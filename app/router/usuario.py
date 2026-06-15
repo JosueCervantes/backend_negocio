@@ -84,7 +84,6 @@ async def create(dto: UsuarioDto, session: Session = Depends(get_session), _: Us
         password=generate_hash(dto.password)
         )
     try:
-        session.rollback()
         session.add(dato_db)
         session.commit()
         session.refresh(dato_db)

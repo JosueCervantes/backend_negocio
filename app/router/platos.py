@@ -111,7 +111,6 @@ async def create(
         )
     
     try:
-        session.rollback()
         session.add(dato_db)
         session.commit()
         session.refresh(dato_db)

@@ -77,7 +77,12 @@ def show(id: int, session: Session = Depends(get_session), _: UsuarioResponse = 
     )
 #crear registros con commit y refresh, con http exception si falla con rollback
 @router.post("/", status_code=status.HTTP_201_CREATED)
-def create(dto: NegocioDTO, session: Session = Depends(get_session), _: UsuarioResponse = Depends(get_current_user)):
+def create(dto: NegocioDTO, session: Session = Depends(get_session), usuario_actual: UsuarioResponse = Depends(get_current_user)):
+    if dto.usuario_id is not None and dto.usuario_id != usuario_actual.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="No puedes crear un negocio para otro usuario",
+        )
     existe = session.query(Negocio).filter(Negocio.nombre == dto.nombre).first()
     if existe:
         raise HTTPException(
@@ -120,13 +125,25 @@ def create(dto: NegocioDTO, session: Session = Depends(get_session), _: UsuarioR
 
 #editar un registro con commit y refresh, con http exception si falla con rollback
 @router.put("/{id}", status_code=status.HTTP_200_OK, response_model=NegocioInterface)
-def update(id: int, dto: NegocioDTO, session: Session = Depends(get_session), _: UsuarioResponse = Depends(get_current_user)):
+def update(id: int, dto: NegocioDTO, session: Session = Depends(get_session), usuario_actual: UsuarioResponse = Depends(get_current_user)):
     dato = session.query(Negocio).filter(Negocio.id == id).first()
 
     if not dato:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Negocio no encontrado",
+        )
+
+    if dato.usuario_id != usuario_actual.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="No tienes permiso para modificar este negocio",
+        )
+
+    if dto.usuario_id is not None and dto.usuario_id != usuario_actual.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="No puedes transferir el negocio a otro usuario",
         )
 
     existe = (
@@ -206,13 +223,19 @@ def update(id: int, dto: NegocioDTO, session: Session = Depends(get_session), _:
 
 #eliminar un registro con commit y refresh, con http exception si falla con rollback
 @router.delete("/{id}", status_code=status.HTTP_200_OK)
-def delete(id: int, session: Session = Depends(get_session), _: UsuarioResponse = Depends(get_current_user)):
+def delete(id: int, session: Session = Depends(get_session), usuario_actual: UsuarioResponse = Depends(get_current_user)):
     dato = session.query(Negocio).filter(Negocio.id == id).first()
 
     if not dato:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Negocio no encontrado",
+        )
+
+    if dato.usuario_id != usuario_actual.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="No tienes permiso para eliminar este negocio",
         )
 
     try:

@@ -48,7 +48,6 @@ async def create(dto: PlatoCategoriaDto, session: Session = Depends(get_session)
     # hay q crear el slug a partir del nombre, para eso usamos la función slugify
     dato_db = PlatosCategoria(nombre=dto.nombre, slug=slugify(dto.nombre))
     try:
-        session.rollback()
         session.add(dato_db)
         session.commit()
         session.refresh(dato_db)

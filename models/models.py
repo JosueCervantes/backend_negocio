@@ -20,10 +20,11 @@ class Perfil(SQLModel, table=True): #si es admin o cliente
     nombre: str
     usuarios: list["Usuario"] = Relationship(back_populates="perfil") #lista de usuarios que pertenecen a este perfil
 
-class Usuario(SQLModel, table=True): 
+class Usuario(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     nombre: str
-    email: str
+    correo: str
+    telefono: str
     password: str
     token: str
     perfil_id: int | None = Field(default=None, foreign_key="perfil.id")
@@ -37,12 +38,18 @@ class Usuario(SQLModel, table=True):
 
     negocios: list["Negocio"] = Relationship(back_populates="usuario") #lista de negocios que pertenecen a este usuario
 
+    @property
+    def fecha(self) -> datetime:
+        return self.created_at
+
 class Negocio(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     nombre: str
+    slug: str = Field(unique=True)
     correo: str
     telefono: str
     descripcion: str
+    direccion: str
     logo: str
     mapa: str
     estado_id: int | None = Field(default=None, foreign_key="estado.id")
@@ -58,6 +65,10 @@ class Negocio(SQLModel, table=True):
 
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+    @property
+    def fecha(self) -> datetime:
+        return self.created_at
 
 class PlatosCategoria(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)

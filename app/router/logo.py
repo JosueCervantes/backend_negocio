@@ -86,8 +86,8 @@ async def create(id: Annotated[int, Form()], file: UploadFile, session: Session 
             detail={"estado": "error", "mensaje": "Ocurrió un error inesperado" }
         )
     
-    #borramos el archivo anterior de la BD
-    if logo=="94972b65-2bca-4804-b3dd-7ce927320be4.jpg":
+    #borramos el archivo anterior de la BD (si no es el logo por defecto)
+    if logo == os.getenv("S3_LOGO_NEGOCIO"):
         pass
     else:
         try:

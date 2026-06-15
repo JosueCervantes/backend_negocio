@@ -10,7 +10,7 @@ from alembic import context
 from sqlmodel import SQLModel
 
 #importar todos los modelos de la base de datos
-from models.models import Estado, Categoria, Usuario, Perfil
+from models.models import Estado, Categoria, Usuario, Perfil, Negocio, PlatosCategoria, Platos
 
 # access to the values within the .ini file in use.
 config = context.config
