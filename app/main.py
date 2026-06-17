@@ -52,6 +52,7 @@ from app.router.platos import router as platos_router
 from app.router.carta import router as carta
 from app.router.perfil import router as perfil_router
 from app.router.usuario import router as usuario_router
+from app.router.login import router as login_router
 from app.router.recovery import router as recovery_router
 
 app.include_router(estado_router)
@@ -66,6 +67,7 @@ app.include_router(platos_router)
 app.include_router(carta)
 app.include_router(perfil_router)
 app.include_router(usuario_router)
+app.include_router(login_router)
 app.include_router(recovery_router)
 
 @app.get("/")
